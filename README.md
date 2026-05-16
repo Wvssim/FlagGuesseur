@@ -84,7 +84,7 @@ Découvrez l'application en action : modes de jeu, duel temps réel, système de
 
 1. **Clone le dépôt**
 \\\ash
-git clone https://github.com/wassimilazim/FlagGuesseur.git
+git clone https://github.com/Wvssim/FlagGuesseur.git
 cd FlagGuesseur
 \\\
 
@@ -173,9 +173,9 @@ UI (Compose) → ViewModel → Repository → Data (Room/Supabase/Seed)
 
 ## 📝 Rapport Technique
 
-Rapport LaTeX complet avec architecture, diagrammes UML, et spécifications.
-Voir : [\
-apport.tex\](./rapport.tex)
+Rapport complet en PDF avec architecture MVVM, diagrammes UML, spécifications techniques et démonstration.
+
+📥 **[Télécharger le rapport PDF](./Flaguesser_Wassim_Lazim.pdf)** (Architecture, cas d'usage, implémentation, perspectives)
 
 ---
 
