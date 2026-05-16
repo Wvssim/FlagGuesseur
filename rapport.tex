@@ -1,0 +1,588 @@
+    %%  RAPPORT TECHNIQUE COMPLET — FlagGuesseur
+    %%  Application Android de Quiz Géographique
+    %%  Auteur : Wassim Lazim
+    %%  Encadrant : Mohammed Bousmah
+    %%  IMPORTANT: Sur Overleaf, changer le compilateur à XeLaTeX pour un rendu correct du texte arabe
+    %%  Menu Overleaf > Menu (en haut à gauche) > Compiler > Changer en XeLaTeX
+    %% ============================================================
+    \documentclass[12pt,a4paper,openany]{report}
+    %% ── Packages ─────────────────────────────────────────────────
+    \usepackage[utf8]{inputenc}
+    \usepackage[T1]{fontenc}
+    \usepackage[arabic,french]{babel}
+    \selectlanguage{french}
+    \usepackage{geometry}
+    \geometry{margin=2.5cm}
+    \usepackage{graphicx}
+    \usepackage{float}
+    \usepackage{hyperref}
+    \hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue}
+    \usepackage{listings}
+    \usepackage{xcolor}
+    \usepackage{booktabs}
+    \usepackage{tabularx}
+    \usepackage{longtable}
+    \usepackage{array}
+    \usepackage{enumitem}
+    \usepackage{titlesec}
+    \usepackage{fancyhdr}
+    \usepackage{tcolorbox}
+    \usepackage{amsmath}
+    \usepackage{caption}
+    \usepackage{subcaption}
+    \usepackage{lmodern}
+    \usepackage{microtype}
+    \usepackage{parskip}
+    \usepackage{needspace}
+    \usepackage{emptypage}
+    \usepackage{setspace}
+    \usepackage{xparse}
+
+    %% ── Style code Kotlin ────────────────────────────────────────
+    \definecolor{codebg}{HTML}{1E1E2E}
+    \definecolor{codecomment}{HTML}{6272A4}
+    \definecolor{codekw}{HTML}{FF79C6}
+    \definecolor{codestring}{HTML}{F1FA8C}
+    \definecolor{codenum}{HTML}{BD93F9}
+
+    \lstdefinelanguage{Kotlin}{
+      keywords={fun, val, var, class, data, object, interface, enum, when, if, else,
+                return, suspend, override, private, public, sealed, companion, import,
+                package, by, lazy, init, for, while, in, is, as, null, true, false},
+      keywordstyle=\color{codekw}\bfseries,
+      comment=[l]{//},
+      morecomment=[s]{/*}{*/},
+      commentstyle=\color{codecomment}\itshape,
+      stringstyle=\color{codestring},
+      morestring=[b]",
+      morestring=[b]',
+      sensitive=true
+    }
+
+    \lstset{
+      language=Kotlin,
+      backgroundcolor=\color{codebg},
+      basicstyle=\ttfamily\footnotesize\color{white},
+      breaklines=true,
+      frame=single,
+      rulecolor=\color{gray},
+      numbers=left,
+      numberstyle=\tiny\color{gray},
+      tabsize=2,
+      showstringspaces=false
+    }
+
+    %% ── En-têtes ─────────────────────────────────────────────────
+    \pagestyle{fancy}
+    \fancyhf{}
+    \rhead{\small FlagGuesseur}
+    \lhead{\small \rightmark}
+    \cfoot{\thepage}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\sectionmark}[1]{\markright{\thesection.\ #1}}
+    \renewcommand{\chaptermark}[1]{\markboth{\chaptername\ \thechapter.\ #1}{}}
+
+    %% ── Couleurs boîtes ──────────────────────────────────────────
+    \tcbuselibrary{skins,breakable}
+    \newtcolorbox{infobox}[1][]{
+      colback=blue!5, colframe=blue!40, title=#1,
+      fonttitle=\bfseries, breakable
+    }
+
+    \newtcolorbox{warningbox}[1][]{
+      colback=orange!5, colframe=orange!60, title=#1,
+      fonttitle=\bfseries
+    }
+
+    %% ============================================================
+    \begin{document}
+
+    %% ── Page de titre ────────────────────────────────────────────
+    \begin{titlepage}
+      \centering
+      \vspace*{0.5cm}
+
+      % Logo
+      \includegraphics[width=0.28\textwidth]{logo.png}\\[1.5cm]
+
+      % Titre principal
+      {\Huge\bfseries\textcolor{blue}{FlagGuesseur}}\\[0.6cm]
+      {\Large Application Android de Quiz Géographique}\\[0.3cm]
+      {\large Rapport Technique Complet}\\[3cm]
+
+      % Informations techniques
+      {\large\textbf{Spécifications Techniques}}\\[1.2cm]
+      \begin{tabular}{rl}
+        \toprule
+        \textbf{Plateforme}   & Android (API 24+) \\
+        \textbf{Langage}      & Kotlin + Jetpack Compose \\
+        \textbf{Base de données} & Room (local) + Supabase (cloud) \\
+        \textbf{Version}      & 1.0 \\
+        \textbf{Date}         & \today \\
+        \bottomrule
+      \end{tabular}
+
+      \vfill
+
+      % Informations académiques — À REMPLIR PAR L'UTILISATEUR
+      {\large\textbf{Informations Académiques}}\\[1.2cm]
+      \begin{tabular}{rl}
+        \toprule
+        \textbf{Étudiant}     & Wassim Lazim \\
+        \textbf{Encadrant}    & Mohammed Bousmah \\
+        \textbf{Type}         & Projet de Fin d'Études \\
+        \textbf{Établissement}& École Marocaine des Sciences de l'Ingénieur \\
+        \bottomrule
+      \end{tabular}
+
+      \vfill
+      \vspace{1.5cm}
+
+      % Bismillah (بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ) - XeLaTeX requis
+      \begin{center}
+        \Large\bfseries\foreignlanguage{arabic}{بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ}
+      \end{center}
+
+    \end{titlepage}
+
+
+    %% ── Page avec image Bismillah ──────────────────────────────
+    \newpage
+    \thispagestyle{empty}
+    \centering
+    \vspace*{4cm}
+    \includegraphics[width=0.7\textwidth]{bismi.png}
+    \vfill
+
+    %% ── Dédicaces ───────────────────────────────────────────────
+    \newpage
+    \chapter*{Dédicaces}
+    \thispagestyle{empty}
+
+    \vspace*{3cm}
+
+    \begin{flushright}
+      \itshape
+      \Large
+
+      À ma famille qui m'a soutenu tout au long de ce parcours,\\[0.5cm]
+
+      À mes amis qui ont cru en ce projet,\\[0.5cm]
+
+      À mon encadrant Mohammed Bousmah pour ses conseils précieux et son accompagnement,\\[0.5cm]
+
+      À tous ceux qui ont contribué de près ou de loin à la réussite de cette application.\\[0.5cm]
+
+      \vspace{1cm}
+
+      Wassim Lazim
+    \end{flushright}
+
+    %% ── Remerciements ───────────────────────────────────────────
+    \newpage
+    \chapter*{Remerciements}
+
+    Je tiens à exprimer mes plus sincères remerciements à :
+
+    \begin{itemize}[leftmargin=2em]
+      \item \textbf{Mohammed Bousmah}, mon encadrant, pour son orientation précieuse, ses conseils avisés et sa disponibilité constante tout au long de ce projet de fin d'études.
+
+      \item \textbf{Les membres du jury} pour le temps consacré à l'évaluation de ce rapport et de l'application.
+
+      \item \textbf{Ma famille et mes proches} pour leur soutien moral et leur encouragement continu.
+
+      \item \textbf{Les contributeurs de la communauté Android} pour les ressources et documentations disponibles en ligne.
+
+      \item \textbf{L'équipe Supabase} pour leur plateforme cloud robuste et leur excellent support.
+
+      \item \textbf{Google Developers} pour les excellentes documentations concernant Android, Kotlin et Jetpack Compose.
+    \end{itemize}
+
+    %% ── Page blanche ────────────────────────────────────────────
+    \newpage
+    \thispagestyle{empty}
+    \mbox{}
+
+    %% ── Résumé ──────────────────────────────────────────────────
+    \newpage
+    \chapter*{Résumé}
+    \addcontentsline{toc}{chapter}{Résumé}
+
+    \noindent\textbf{FlagGuesseur} est une application Android native développée en Kotlin avec Jetpack Compose, proposant un quiz interactif de reconnaissance de drapeaux nationaux. L'application couvre plus de 70 pays répartis en 7 catégories géographiques (Europe, Afrique, Asie, Moyen-Orient, Amériques, Océanie et Monde entier).
+
+    \vspace{0.5cm}
+
+    L'application intègre :
+    \begin{itemize}
+      \item Un back-end cloud \textbf{Supabase} (PostgreSQL) pour la synchronisation des questions et des classements mondiaux
+      \item Une base de données locale \textbf{Room} (SQLite) pour le mode hors-ligne
+      \item Un mode duel en temps réel avec polling Supabase
+      \item Une reconnaissance vocale native Android (SpeechRecognizer)
+      \item Un système de gamification complet (couronnes, niveaux, revive)
+      \item 7 modes de jeu variés avec règles et scoring distincts
+      \item Une interface utilisateur moderne utilisant le thème « Atlas Nocturne »
+    \end{itemize}
+
+    \vspace{0.5cm}
+
+    Ce rapport détaille l'architecture MVVM + Repository Pattern, les choix techniques fondamentaux, la structure de données à travers Room et Supabase, les fonctionnalités principales, l'implémentation technique complète, et les perspectives d'évolution du projet.
+
+    %% ── Mots-clés ──────────────────────────────────────────────
+    \vspace{1cm}
+
+    \noindent\textbf{Mots-clés :} Application Android, Kotlin, Jetpack Compose, Quiz géographique, Supabase, Room, MVVM, Gamification, SpeechRecognizer, Duel en temps réel, API REST
+
+    %% ── Table des matières ──────────────────────────────────────
+    \newpage
+    \tableofcontents
+    \newpage
+    \listoffigures
+    \newpage
+    \listoftables
+
+    %% ── Liste des abréviations ──────────────────────────────────
+    \newpage
+    \chapter*{Liste des Abréviations}
+    \addcontentsline{toc}{chapter}{Liste des Abréviations}
+
+    \begin{longtable}{lp{10cm}}
+      \toprule
+      \textbf{Abréviation} & \textbf{Signification} \\
+      \midrule
+      \endhead
+
+      \bottomrule
+      \endfoot
+
+      API & Application Programming Interface \\
+      AVD & Android Virtual Device \\
+      CSV & Comma-Separated Values \\
+      DAO & Data Access Object \\
+      FCM & Firebase Cloud Messaging \\
+      FPS & Frames Per Second \\
+      Git & Version Control System \\
+      GSON & Google Serialization/Deserialization \\
+      HTTP/HTTPS & HyperText Transfer Protocol / Secure \\
+      IDE & Integrated Development Environment \\
+      ISO & International Organization for Standardization \\
+      JSON & JavaScript Object Notation \\
+      JWT & JSON Web Token \\
+      KSP & Kotlin Symbol Processing \\
+      Material Design & Design Language de Google \\
+      MVVM & Model-View-ViewModel \\
+      OAuth & Open Authorization \\
+      OkHttp & HTTP Client Library \\
+      PostgreSQL & Système de gestion de base de données \\
+      REST & Representational State Transfer \\
+      RLS & Row Level Security \\
+      SDK & Software Development Kit \\
+      SharedPreferences & Stockage de préférences Android \\
+      SpeechRecognizer & API Android de reconnaissance vocale \\
+      SQLite & Base de données embarquée \\
+      StateFlow & Flow coroutine pour états réactifs \\
+      Supabase & Backend-as-a-Service Open Source \\
+      UI & User Interface \\
+      UUID & Universally Unique Identifier \\
+      ViewModel & Classe Android gestion d'état UI \\
+
+    \end{longtable}
+
+    %% ============================================================
+    %% CONTENU PRINCIPAL
+    %% ============================================================
+
+    \newpage
+
+    %% ── CHAPITRE 1 : INTRODUCTION ──────────────────────────────
+    \chapter{Introduction et Contexte Général du Projet}
+
+    \section{Présentation générale}
+
+    FlagGuesseur est une application mobile conçue pour rendre l'apprentissage de la géographie ludique et engageant. Basée sur la reconnaissance des drapeaux nationaux, elle propose une expérience interactive multimodale combinant quiz traditionnel, reconnaissance vocale, et compétition en temps réel.
+
+    \section{Motivation du projet}
+
+    Le projet répond à plusieurs objectifs :
+    \begin{itemize}
+      \item Créer une application pédagogique accessible et divertissante
+      \item Démontrer la maîtrise des technologies modernes Android (Kotlin, Jetpack Compose)
+      \item Implémenter une architecture évolutive (MVVM, Repository Pattern)
+      \item Intégrer des services cloud avec stratégie de synchronisation robuste
+      \item Fournir une expérience utilisateur fluide sur 60 FPS constant
+    \end{itemize}
+
+    %% ── CHAPITRE 2 : ARCHITECTURE GÉNÉRALE ──────────────────────
+    \chapter{Architecture et Design}
+
+    \section{Pattern MVVM + Repository}
+
+    L'architecture suit le pattern Model-View-ViewModel couplé à Repository Pattern :
+
+    \begin{infobox}{Architecture globale}
+    UI (Compose) $\rightarrow$ ViewModel $\rightarrow$ Repository $\rightarrow$ Data Sources (Room/Supabase/Seed)
+    \end{infobox}
+
+    \section{Stratégie Remote-First avec Fallback}
+
+    \begin{enumerate}
+      \item \textbf{Tentative Supabase} : Récupération des questions et leaderboard frais
+      \item \textbf{Succès} : Cache dans Room + Retour au UI
+      \item \textbf{Erreur réseau} : Basculer automatiquement sur le cache Room
+      \item \textbf{Cache vide} : Utiliser les SeedData embarquées
+    \end{enumerate}
+
+    %% ── CHAPITRE 3 : FONCTIONNALITÉS PRINCIPALES ────────────────
+    \chapter{Fonctionnalités Principales}
+
+    \section{7 Modes de Jeu}
+
+    \begin{enumerate}
+      \item \textbf{Classique} : Mode standard (3 vies, 15s/question, points standard)
+      \item \textbf{Survie} : Timer accéléré (1 vie, points doublés, difficulté progressive)
+      \item \textbf{Contre-la-montre} : 60 secondes partagées pour toutes les questions
+      \item \textbf{Capitales} : Identifier la capitale du pays montré
+      \item \textbf{Zen} : Apprentissage sans stress (pas de timer, pas de vies)
+      \item \textbf{Vocal} : Prononciation du nom du pays via SpeechRecognizer
+      \item \textbf{Duel} : 1v1 en temps réel avec synchronisation Supabase (polling 2s)
+    \end{enumerate}
+
+    \section{Système de Gamification}
+
+    \subsection{Couronnes (Monnaie In-App)}
+    \begin{itemize}
+      \item Indice déverrouille : 50 couronnes
+      \item Revive après défaite : 200-1000 couronnes (basé sur difficulté)
+    \end{itemize}
+
+    \subsection{Niveaux}
+    L'application propose 6 niveaux progressifs basés sur couronnes accumulées :
+    \begin{enumerate}
+      \item Novice
+      \item Apprenti
+      \item Explorateur
+      \item Aventurier
+      \item Expert
+      \item Maître des Nations
+    \end{enumerate}
+
+    \subsection{Classement Mondial}
+    Top 100 en temps réel avec :
+    \begin{itemize}
+      \item Synchronisation Supabase automatique
+      \item Notifications au nouveau record personnel
+      \item Vue globale et statistiques détaillées
+    \end{itemize}
+
+    %% ── CHAPITRE 4 : STACK TECHNOLOGIQUE ────────────────────────
+    \chapter{Stack Technologique}
+
+    \section{Environnement de Développement}
+
+    \begin{tabular}{l|l}
+    \toprule
+    \textbf{Catégorie} & \textbf{Technologie} \\
+    \midrule
+    Langage & Kotlin 2.x \\
+    UI Framework & Jetpack Compose + Material Design 3 \\
+    Architecture Pattern & MVVM + Repository \\
+    Base de données locale & Room 2.x (SQLite) \\
+    Base de données cloud & Supabase (PostgreSQL) \\
+    Réseau & Retrofit 2 + OkHttp 4 \\
+    Gestion d'images & Coil 2 (SVG support) \\
+    Reconnaissance vocale & Android SpeechRecognizer \\
+    Animations & Lottie + Compose Animations \\
+    API Externe & OpenRouter (LIA assistant) \\
+    \midrule
+    Minimum SDK & API 24 (Android 7.0) \\
+    Target SDK & API 35 (Android 15) \\
+    \bottomrule
+    \end{tabular}
+
+    %% ── CHAPITRE 5 : DONNÉES ET STOCKAGE ────────────────────────
+    \chapter{Gestion des Données}
+
+    \section{Architecture Room (Local)}
+
+    Room gère :
+    \begin{itemize}
+      \item Cache des questions récupérées depuis Supabase
+      \item Solde de couronnes utilisateur
+      \item Statistiques et scores locaux
+      \item Leaderboard local (fallback)
+    \end{itemize}
+
+    \section{Supabase (Cloud)}
+
+    Supabase fournit :
+    \begin{itemize}
+      \item Table principale : \texttt{questions} (pays, catégories, options, drapeaux)
+      \item Table leaderboard : \texttt{leaderboard} (utilisateur, score, couronnes)
+      \item Table duel en temps réel : \texttt{duel\_rooms}
+      \item Row-Level Security (RLS) pour sécurité
+    \end{itemize}
+
+    %% ── CHAPITRE 6 : IMPLÉMENTATION DÉTAILLÉE ────────────────────
+    \chapter{Détails d'Implémentation}
+
+    \section{Flow Classique de Jeu}
+
+    \begin{enumerate}
+      \item Utilisateur sélectionne mode + catégorie
+      \item Repository tente Supabase $\rightarrow$ fallback Room
+      \item Questions affichées avec drapeau (Image Coil SVG)
+      \item Utilisateur répond parmi 4 options
+      \item Score calculé (bonus temps restant en mode Classique)
+      \item Couronnes ajoutées au solde Room
+      \item Leaderboard synchronisé vers Supabase
+    \end{enumerate}
+
+    \section{LIA Assistant (OpenRouter)}
+
+    \begin{infobox}{Assistant éducatif}
+    Powered by OpenRouter API avec fallback sur données prédéfinies pour questions QCM par pays.
+    \end{infobox}
+
+    Fonctionnalités LIA :
+    \begin{itemize}
+      \item Explications automatiques pour chaque réponse correcte
+      \item Chat libre sur géographie et culture générale
+      \item Génération QCM sur sujet spécifique
+    \end{itemize}
+
+    \section{Mode Duel (Temps Réel)}
+
+    Implémentation :
+    \begin{enumerate}
+      \item Appairage via Supabase query (recherche joueur disponible)
+      \item Synchronisation score toutes les 2 secondes (polling)
+      \item Vainqueur déclaré quand premier franchit threshold (ex: 10 bonnes réponses)
+      \item Résultat sauvegardé dans \texttt{duel\_history}
+    \end{enumerate}
+
+    %% ── CHAPITRE 7 : CAS D'USAGE ────────────────────────────────
+    \chapter{Cas d'Usage}
+
+    L'application propose 5 cas d'usage principaux détaillés en annexe UML:
+
+    \begin{enumerate}
+      \item Jouer en mode Classique (et variantes)
+      \item Affronter un adversaire en Duel
+      \item Débloquer Indice (consommer couronnes)
+      \item Consulter Classement mondial
+      \item Utiliser Mode Vocal
+    \end{enumerate}
+
+    \noindent Voir diagramme des cas d'usage : \texttt{usecases.uml}
+
+    %% ── CHAPITRE 8 : TESTS ET VALIDATION ────────────────────────
+    \chapter{Tests et Validation}
+
+    \section{Tests Unitaires}
+
+    À implémenter : Tests pour calculateur de score, validateur de réponses, etc.
+
+    \section{Tests d'Intégration}
+
+    À implémenter : Tests Room, Supabase synchronization, OpenRouter integration.
+
+    \section{Tests UI}
+
+    À implémenter : Tests Compose pour écrans principaux, navigation, état.
+
+    %% ── CHAPITRE 9 : DÉPLOIEMENT ET DISTRIBUTION ────────────────
+    \chapter{Déploiement}
+
+    \section{Build Release}
+
+    \begin{lstlisting}[language=bash]
+    ./gradlew bundleRelease  # Google Play App Bundle
+    ./gradlew build          # APK Debug/Release
+    \end{lstlisting}
+
+    \section{Configuration Overleaf}
+
+    Sur Overleaf (si compilé à partir du LaTeX) :
+    \begin{itemize}
+      \item \textbf{Compilateur requis} : XeLaTeX (pour texte arabe)
+      \item Menu : Overleaf > Menu > Compiler > XeLaTeX
+      \item Tous les fichiers images doivent être dans le dossier \texttt{assets/}
+    \end{itemize}
+
+    %% ── CHAPITRE 10 : PERSPECTIVES ET AMÉLIORATIONS ──────────────
+    \chapter{Perspectives Futures}
+
+    \section{Court Terme}
+
+    \begin{itemize}
+      \item Implémenter tests automatisés (unit + integration)
+      \item Optimiser requêtes Supabase (indexation)
+      \item Analytics pour suivi utilisateurs
+    \end{itemize}
+
+    \section{Moyen Terme}
+
+    \begin{itemize}
+      \item Système d'amis et invitations directes pour duel
+      \item Tournois hebdomadaires avec récompenses
+      \item Modes multijoueur (4+ joueurs)
+      \item Support hors-ligne complète (mode Zen sans réseau)
+    \end{itemize}
+
+    \section{Long Terme}
+
+    \begin{itemize}
+      \item Extension iOS via Kotlin Multiplatform
+      \item Backend custom (remplacer OpenRouter par fine-tuned LLM interne)
+      \item Intégration réseaux sociaux (partage scores)
+      \item Monétisation (cosmétiques, pass premium)
+    \end{itemize}
+
+    %% ── ANNEXES ──────────────────────────────────────────────────
+    \appendix
+
+    \chapter{Diagrammes UML}
+
+    \section{Use Cases}
+
+    Voir fichier séparé : \texttt{usecases.uml}
+
+    Les diagrammes suivants doivent être inclus :
+    \begin{itemize}
+      \item Architecture MVVM
+      \item Flux synchronisation Supabase
+      \item Flux duel en temps réel
+    \end{itemize}
+
+    \chapter{Code Source Clés}
+
+    \section{Structure du Projet}
+
+    \begin{lstlisting}
+    app/src/main/
+    ├── java/com/example/quiz_app_wvssim/
+    │   ├── data/
+    │   │   ├── local/        (Room DAO, Database)
+    │   │   ├── remote/       (Retrofit, Supabase API)
+    │   │   └── repository/   (Repository Pattern)
+    │   ├── domain/           (Entities, Use Cases)
+    │   ├── ui/
+    │   │   ├── screen/       (Composables écrans)
+    │   │   ├── components/   (Composables réutilisables)
+    │   │   └── viewmodel/    (ViewModels)
+    │   └── MainActivity.kt
+    └── resources/
+        └── drawable/        (Assets, icônes)
+    \end{lstlisting}
+
+    \chapter{Ressources et Références}
+
+    \begin{enumerate}
+      \item Android Official Documentation : \url{https://developer.android.com}
+      \item Jetpack Compose Guide : \url{https://developer.android.com/jetpack/compose}
+      \item Room Database : \url{https://developer.android.com/training/data-storage/room}
+      \item Supabase Documentation : \url{https://supabase.com/docs}
+      \item Kotlin Documentation : \url{https://kotlinlang.org/docs}
+    \end{enumerate}
+
+    %% ── Fin du document ──────────────────────────────────────────
+    \end{document}

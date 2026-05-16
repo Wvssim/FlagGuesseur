@@ -1,0 +1,101 @@
+@startuml FlagGuesseur_UseCases
+!define AWSPUML https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/v14.0/dist
+!include AWSPUML/AWSCommon.puml
+
+skinparam backgroundColor #080C18
+skinparam defaultFontColor #F8FAFC
+skinparam className #1A2240
+skinparam classArrowColor #F0C040
+
+' Acteurs
+actor "Joueur\n(Utilisateur)" as Player
+actor "Adversaire\n(Mode Duel)" as Opponent
+entity "Application\nFlagGuesseur" as App
+database "Room\n(Local)" as Room
+database "Supabase\n(Cloud)" as Supabase
+component "SpeechRecognizer\n(Android)" as Speech
+
+' Cas d'usage
+usecase "Jouer en mode\nClassique" as UC1
+usecase "Sélectionner\nCatégorie" as UC1A
+usecase "Répondre à\nQuestion" as UC1B
+usecase "Calculer\nScore" as UC1C
+usecase "Afficher\nRésultats" as UC1D
+usecase "Reviver\navec Couronnes" as UC1E
+
+usecase "Affronter\nAdversaire (Duel)" as UC2
+usecase "Chercher\nJoueur" as UC2A
+usecase "Synchroniser\nScore (Polling)" as UC2B
+usecase "Déclarer\nVainqueur" as UC2C
+
+usecase "Débloquer\nIndice" as UC3
+usecase "Vérifier\nSolde Couronnes" as UC3A
+usecase "Débiter\nCouronnes" as UC3B
+usecase "Afficher\nTexte Indice" as UC3C
+
+usecase "Consulter\nClassement" as UC4
+usecase "Récupérer\nTop 100" as UC4A
+usecase "Afficher\nClassement" as UC4B
+
+usecase "Utiliser\nMode Vocal" as UC5
+usecase "Activer\nMicrophone" as UC5A
+usecase "Reconnaître\nParole" as UC5B
+usecase "Comparer\nRéponse" as UC5C
+usecase "Attribuer\nPoints" as UC5D
+
+' Relations acteur-usecase
+Player --> UC1 : Joue
+Player --> UC2 : Affronte
+Player --> UC3 : Utilise
+Player --> UC4 : Consulte
+Player --> UC5 : Parle
+Opponent --> UC2 : Participe
+
+' Relations usecase - sous-usecase
+UC1 --> UC1A : inclut
+UC1 --> UC1B : inclut
+UC1 --> UC1C : inclut
+UC1 --> UC1D : inclut
+UC1 --> UC1E : étend (défaite)
+
+UC2 --> UC2A : inclut
+UC2 --> UC2B : inclut
+UC2 --> UC2C : inclut
+
+UC3 --> UC3A : inclut
+UC3 --> UC3B : inclut
+UC3 --> UC3C : inclut
+
+UC4 --> UC4A : inclut
+UC4 --> UC4B : inclut
+
+UC5 --> UC5A : inclut
+UC5 --> UC5B : inclut
+UC5 --> UC5C : inclut
+UC5 --> UC5D : inclut
+
+' Relations avec systèmes externes
+UC1B --> App : soumet réponse
+UC1C --> App : calcule score
+UC1D --> App : sauvegarde
+UC1D --> Room : écrit score
+UC1D --> Supabase : envoie leaderboard
+UC1E --> Room : débite couronnes
+
+UC2A --> Supabase : recherche appairage
+UC2B --> Supabase : polling 2s
+UC2C --> Supabase : met à jour résultat
+
+UC3A --> Room : vérifie solde
+UC3B --> Room : débite -50♛
+UC3C --> App : affiche indice
+
+UC4A --> Supabase : SELECT leaderboard
+UC4A --> Room : fallback cache
+
+UC5A --> Speech : requête permission
+UC5B --> Speech : startListening()
+UC5C --> App : compare texte
+UC5D --> App : attribue points
+
+@enduml
